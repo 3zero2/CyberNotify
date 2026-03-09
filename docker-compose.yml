@@ -1,5 +1,5 @@
 services:
   cybernotify:
-    build: .
+    image: ghcr.io/3zero2/cybernotify:latest
     env_file: .env
     restart: unless-stopped
