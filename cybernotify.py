@@ -128,10 +128,16 @@ def fetch_live_data(session_id: str, tz: ZoneInfo) -> list[dict]:
     )
     resp.raise_for_status()
     data = resp.json()
-    if not isinstance(data, list):
-        log.warning("Expected list from LiveData API but received %s — returning empty list.", type(data).__name__)
-        return []
-    return [item for item in data if isinstance(item, dict)]
+    if isinstance(data, dict):
+        positions = data.get("ListPosition", [])
+        if not isinstance(positions, list):
+            log.warning("Expected list for ListPosition but received %s — returning empty list.", type(positions).__name__)
+            return []
+        return [item for item in positions if isinstance(item, dict)]
+    if isinstance(data, list):
+        return [item for item in data if isinstance(item, dict)]
+    log.warning("Unexpected response type from LiveData API: %s — returning empty list.", type(data).__name__)
+    return []
 
 
 def send_telegram(cfg: dict, message: str) -> None:
