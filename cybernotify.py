@@ -122,7 +122,7 @@ def fetch_live_data(session_id: str) -> list[dict]:
         f"{BASE_URL}/LiveData/Select",
         params={
             "Session_ID": session_id,
-            "LastUpdate": "2000-01-01 00:00:00",
+            "LastUpdate": (datetime.now() - timedelta(seconds=3)).strftime("%Y-%m-%d %H:%M:%S"),
         },
         timeout=30,
     )
