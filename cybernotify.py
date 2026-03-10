@@ -116,13 +116,13 @@ def login(cfg: dict) -> str:
     return session_id
 
 
-def fetch_live_data(session_id: str) -> list[dict]:
+def fetch_live_data(session_id: str, tz: ZoneInfo) -> list[dict]:
     """Fetch current positions from LiveData endpoint."""
     resp = requests.get(
         f"{BASE_URL}/LiveData/Select",
         params={
             "Session_ID": session_id,
-            "LastUpdate": (datetime.now() - timedelta(seconds=3)).strftime("%Y-%m-%d %H:%M:%S"),
+            "LastUpdate": (datetime.now(tz=tz) - timedelta(seconds=3)).strftime("%Y-%m-%d %H:%M:%S"),
         },
         timeout=30,
     )
@@ -189,7 +189,7 @@ def main() -> None:
                 session_id = login(cfg)
 
             # Poll live data
-            positions = fetch_live_data(session_id)
+            positions = fetch_live_data(session_id, cfg["timezone"])
 
             # Find our tracker
             for pos in positions:
