@@ -127,7 +127,11 @@ def fetch_live_data(session_id: str) -> list[dict]:
         timeout=30,
     )
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    if not isinstance(data, list):
+        log.warning("Expected list from LiveData API but received %s — returning empty list.", type(data).__name__)
+        return []
+    return [item for item in data if isinstance(item, dict)]
 
 
 def send_telegram(cfg: dict, message: str) -> None:
