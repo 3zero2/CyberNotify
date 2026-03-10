@@ -5,6 +5,7 @@ import os
 import time
 import unicodedata
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -20,6 +21,14 @@ BASE_URL = "https://trak.cyberpass.com.mt/APIWeb"
 
 # ── config ───────────────────────────────────────────────────────────────────
 
+def _load_timezone(tz_name: str) -> ZoneInfo:
+    try:
+        return ZoneInfo(tz_name)
+    except Exception:
+        log.warning("Invalid TZ value %r — falling back to 'Europe/Malta'.", tz_name)
+        return ZoneInfo("Europe/Malta")
+
+
 def load_config() -> dict:
     required = ["CYBERPASS_USERNAME", "CYBERPASS_PASSWORD", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"]
     cfg = {
@@ -33,6 +42,7 @@ def load_config() -> dict:
         "window_start": os.environ.get("NOTIFY_WINDOW_START", "13:30"),
         "window_end": os.environ.get("NOTIFY_WINDOW_END", "14:30"),
         "notify_days": [int(d) for d in os.environ.get("NOTIFY_DAYS", "0,1,2,3,4").split(",")],
+        "timezone": _load_timezone(os.environ.get("TZ", "Europe/Malta")),
     }
     missing = [k for k in required if not os.environ.get(k)]
     if missing:
@@ -59,7 +69,7 @@ def parse_time(t: str) -> tuple[int, int]:
 
 
 def in_notify_window(cfg: dict) -> bool:
-    now = datetime.now()
+    now = datetime.now(tz=cfg["timezone"])
     if now.weekday() not in cfg["notify_days"]:
         return False
     start_h, start_m = parse_time(cfg["window_start"])
@@ -71,7 +81,7 @@ def in_notify_window(cfg: dict) -> bool:
 
 def seconds_until_next_window(cfg: dict) -> float:
     """Return seconds until the next notify window opens."""
-    now = datetime.now()
+    now = datetime.now(tz=cfg["timezone"])
     start_h, start_m = parse_time(cfg["window_start"])
 
     for day_offset in range(8):  # check up to a week ahead
@@ -152,7 +162,7 @@ def main() -> None:
     while True:
         try:
             # Reset notification flag on new day
-            today = datetime.now().strftime("%Y-%m-%d")
+            today = datetime.now(tz=cfg["timezone"]).strftime("%Y-%m-%d")
             if notified_date and notified_date != today:
                 notified_date = None
 
