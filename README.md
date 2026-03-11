@@ -32,6 +32,7 @@ Edit `.env` with your values:
 | `NOTIFY_WINDOW_END` | End of notification window (24h) | `14:30` |
 | `NOTIFY_DAYS` | Days to monitor (0=Mon … 4=Fri) | `0,1,2,3,4` |
 | `TZ` | Timezone | `Europe/Malta` |
+| `LOG_LEVEL` | Log verbosity level | `INFO` |
 
 ### 3. Run with Docker
 
