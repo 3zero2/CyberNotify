@@ -196,6 +196,7 @@ def main() -> None:
 
             # Poll live data
             positions = fetch_live_data(session_id, cfg["timezone"])
+            log.info("fetch_live_data returned %d position(s): %s", len(positions), positions)
 
             # Find our tracker
             for pos in positions:
