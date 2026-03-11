@@ -123,7 +123,7 @@ def fetch_live_data(session_id: str, tz: ZoneInfo) -> list[dict]:
         "Session_ID": session_id,
         "LastUpdate": (datetime.now() - timedelta(seconds=3603)).strftime("%Y-%m-%d %H:%M:%S"),
     }
-    log.info("Calling %s/LiveData/Select with params: %s", BASE_URL, params)
+    log.debug("Calling %s/LiveData/Select with params: %s", BASE_URL, params)
 
     resp = requests.get(
         f"{BASE_URL}/LiveData/Select",
@@ -200,7 +200,7 @@ def main() -> None:
 
             # Poll live data
             positions = fetch_live_data(session_id, cfg["timezone"])
-            log.info("fetch_live_data returned %d position(s): %s", len(positions), positions)
+            log.debug("fetch_live_data returned %d position(s): %s", len(positions), positions)
 
             # Find our tracker
             for pos in positions:
