@@ -122,7 +122,7 @@ def fetch_live_data(session_id: str, tz: ZoneInfo) -> list[dict]:
         f"{BASE_URL}/LiveData/Select",
         params={
             "Session_ID": session_id,
-            "LastUpdate": (datetime.now(tz=tz) - timedelta(seconds=3)).strftime("%Y-%m-%d %H:%M:%S"),
+            "LastUpdate": (datetime.now() - timedelta(seconds=3)).strftime("%Y-%m-%d %H:%M:%S"),
         },
         timeout=30,
     )
