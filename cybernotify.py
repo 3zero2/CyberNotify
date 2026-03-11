@@ -118,12 +118,15 @@ def login(cfg: dict) -> str:
 
 def fetch_live_data(session_id: str, tz: ZoneInfo) -> list[dict]:
     """Fetch current positions from LiveData endpoint."""
+    params = {
+        "Session_ID": session_id,
+        "LastUpdate": (datetime.now() - timedelta(seconds=3)).strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    log.info("Calling %s/LiveData/Select with params: %s", BASE_URL, params)
+
     resp = requests.get(
         f"{BASE_URL}/LiveData/Select",
-        params={
-            "Session_ID": session_id,
-            "LastUpdate": (datetime.now() - timedelta(seconds=3)).strftime("%Y-%m-%d %H:%M:%S"),
-        },
+        params=params,
         timeout=30,
     )
     resp.raise_for_status()
