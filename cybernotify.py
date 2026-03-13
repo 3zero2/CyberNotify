@@ -36,7 +36,9 @@ def load_config() -> dict:
         "username": os.environ.get("CYBERPASS_USERNAME", ""),
         "password": os.environ.get("CYBERPASS_PASSWORD", ""),
         "telegram_token": os.environ.get("TELEGRAM_BOT_TOKEN", ""),
-        "telegram_chat_id": os.environ.get("TELEGRAM_CHAT_ID", ""),
+        "telegram_chat_ids": [
+            cid.strip() for cid in os.environ.get("TELEGRAM_CHAT_ID", "").split(",") if cid.strip()
+        ],
         "tracker_id": int(os.environ.get("TRACKER_ID", "45540")),
         "target_city": os.environ.get("TARGET_CITY", "Ghaxaq"),
         "poll_interval": int(os.environ.get("POLL_INTERVAL_SECONDS", "15")),
@@ -145,16 +147,17 @@ def fetch_live_data(session_id: str, tz: ZoneInfo) -> list[dict]:
 
 
 def send_telegram(cfg: dict, message: str) -> None:
-    """Send a Telegram message via the Bot API."""
-    resp = requests.post(
-        f"https://api.telegram.org/bot{cfg['telegram_token']}/sendMessage",
-        json={"chat_id": cfg["telegram_chat_id"], "text": message, "parse_mode": "HTML"},
-        timeout=15,
-    )
-    if resp.ok:
-        log.info("Telegram notification sent.")
-    else:
-        log.error("Telegram send failed: %s %s", resp.status_code, resp.text)
+    """Send a Telegram message to all configured chat IDs."""
+    for chat_id in cfg["telegram_chat_ids"]:
+        resp = requests.post(
+            f"https://api.telegram.org/bot{cfg['telegram_token']}/sendMessage",
+            json={"chat_id": chat_id, "text": message, "parse_mode": "HTML"},
+            timeout=15,
+        )
+        if resp.ok:
+            log.info("Telegram notification sent to %s.", chat_id)
+        else:
+            log.error("Telegram send failed for %s: %s %s", chat_id, resp.status_code, resp.text)
 
 
 # ── main loop ────────────────────────────────────────────────────────────────

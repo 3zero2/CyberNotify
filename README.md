@@ -24,7 +24,7 @@ Edit `.env` with your values:
 | `CYBERPASS_USERNAME` | CyberPass login username | *(required)* |
 | `CYBERPASS_PASSWORD` | CyberPass login password | *(required)* |
 | `TELEGRAM_BOT_TOKEN` | Telegram bot token from BotFather | *(required)* |
-| `TELEGRAM_CHAT_ID` | Your Telegram chat ID | *(required)* |
+| `TELEGRAM_CHAT_ID` | Telegram chat ID(s) to notify — comma-separated for multiple recipients | *(required)* |
 | `TRACKER_ID` | Tracker ID of the van to monitor | `45540` |
 | `TARGET_CITY` | City name to trigger notification (diacritics-insensitive) | `Ghaxaq` |
 | `POLL_INTERVAL_SECONDS` | How often to check in seconds | `15` |
