@@ -54,7 +54,7 @@ def load_config() -> dict:
 # ── helpers ──────────────────────────────────────────────────────────────────
 
 def strip_diacritics(text: str) -> str:
-    """Remove combining diacritical marks so 'Għaxaq' becomes 'Ghaxaq'."""
+    """Remove combining diacritical marks."""
     nfkd = unicodedata.normalize("NFKD", text)
     return "".join(c for c in nfkd if unicodedata.category(c) != "Mn")
 
